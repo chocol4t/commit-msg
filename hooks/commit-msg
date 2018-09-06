@@ -2,7 +2,7 @@
 
 # phpcs auto-exec script
 
-phpcs_prefix=$(git config phpcs.prefix)
+phpcs_executepath=$(git config phpcs.executepath)
 phpcs_standard=$(git config phpcs.standard)
 phpcs_tmpdir=$(git config phpcs.tmpdir)
 
@@ -21,18 +21,18 @@ fi
 # Redirect output to stderr.
 exec 1>&2
 
-if [ -z "${phpcs_prefix}" ]; then
-    echo '[ERROR] config "phpcs.prefix" is not set.'
-    echo 'e.g. git config phpcs.prefix /path/to/your/app'
+if [ -z "${phpcs_executepath}" ]; then
+    echo '[ERROR] config "phpcs.executepath" is not set.'
+    echo 'e.g. git config phpcs.executepath "/path/to/your/phpcs"'
     exit 1
 fi
 
 if [ -z "${phpcs_standard}" ]; then
-    phpcs_standard="CakePHP"
+    phpcs_standard="PSR2"
 fi
 
 if [ -n "${phpcs_tmpdir}" ]; then
-    tmpfile=$(mktemp -p "${phpcs_tmpdir}")
+    tmpfile=$(mktemp "${PWD}/${phpcs_tmpdir}/tmp")
 else
     tmpfile=$(mktemp)
 fi
@@ -41,10 +41,11 @@ errors=0
 
 for file in $(git diff --cached --name-only --diff-filter=AM)
 do
-    echo -n '[PHPCS:'${phpcs_standard}'] '${file}
-    ${phpcs_prefix}/cakephp/vendor/bin/phpcs \
+    echo '[PHPCS:'${phpcs_standard}'] '${file}
+    ${phpcs_executepath} \
         --standard=${phpcs_standard} \
-        -q "${phpcs_prefix}/${file}" \
+        --extensions=php \
+        -q "./${file}" \
         > ${tmpfile}
 
     result=$(head -10 $tmpfile)
