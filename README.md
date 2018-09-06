@@ -48,14 +48,6 @@ $ ./install.sh /path/to/your/repository
 インストール後に各自の環境に合わせてgitの設定が必要です。
 
 ```
-$ git config phpcs.prefix /path/to/your/app
-$ git config phpcs.standard CakePHP
+$ git config phpcs.executepath /path/to/your/phpcs
+$ git config phpcs.standard "your ruleset"
 ```
-
-CakePHPのCodeSnifferを利用する場合には、以下の設定も１回だけ実行する必要があります。
-
-```
-$ cd /path/to/your/app
-$ ./vendor/bin/phpcs --config-set installed_paths ./vendor/cakephp/cakephp-codesniffer
-```
-
